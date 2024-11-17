@@ -1,3 +1,5 @@
+#define MAX 8192
+
 int fib(int n) {
     if (n == 0) {
         return 0;
@@ -10,16 +12,36 @@ int fib(int n) {
     return fib(n - 1) + fib(n - 2);
 }
 
-float funny(float x) {
-    if (x < 0.5) {
-        x *= 10.0;
+int comedic(int x) {
+    int i = 0;
+
+    while (x < MAX) {
+        i += 1;
+
+        if (x % 2 == 0) {
+            x += 3;
+            continue;
+        }
+
+        x += 1;
     }
+
+    printf(i);
 
     return x;
 }
 
+float funny(float x) {
+    /*if (x < 0.5) {
+        x *= 10.0;
+    }*/
+
+    return x + (5.0 * 8.32);
+}
+
 int main() {
     printf(fib(10));
+    printf(comedic(0));
     printf(funny(0.0));
 
     return 0;

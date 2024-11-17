@@ -259,7 +259,7 @@ func (b *Builder) generateBinaryExpression(node *ast.ASTNode) value.Value {
 		case types.I32:
 			return b.currentBlock.NewICmp(enum.IPredSLT, left, right)
 		case types.Double:
-			return b.currentBlock.NewFCmp(enum.FPredULT, left, right)
+			return b.currentBlock.NewFCmp(enum.FPredOLT, left, right)
 		}
 	case "<=":
 		switch lType {
@@ -303,7 +303,6 @@ func (b *Builder) generateFunctionCall(node *ast.ASTNode) value.Value {
 
 	if fn == nil {
 		if fnName == "printf" {
-			// Extend the function to accept various argument types
 			fn = b.module.NewFunc("printf", types.Void, ir.NewParam("format", types.NewPointer(types.I8)))
 			fn.Sig.Variadic = true
 		} else {
@@ -317,7 +316,6 @@ func (b *Builder) generateFunctionCall(node *ast.ASTNode) value.Value {
 	}
 
 	if fnName == "printf" {
-		// Format string initialization
 		formatStr := ""
 
 		// Generate format string dynamically based on the argument types
@@ -326,20 +324,14 @@ func (b *Builder) generateFunctionCall(node *ast.ASTNode) value.Value {
 			case types.I32:
 				formatStr += "%d"
 			case types.Double:
-				formatStr += "%f" // Change to %f for float
+				formatStr += "%f"
 			default:
 				panic(fmt.Sprintf("Unsupported printf argument type: %v", arg.Type()))
 			}
 		}
 
-		// Add newline and null-terminator to the format string
 		formatStr += "\n\x00"
-
-		// Define the format string as a global variable
-		formatStrGlobal := b.module.NewGlobalDef("", constant.NewCharArray([]byte(formatStr)))
-
-		// Prepend the format string global as the first argument to printf
-		args = append([]value.Value{formatStrGlobal}, args...)
+		args = append([]value.Value{b.module.NewGlobalDef("", constant.NewCharArray([]byte(formatStr)))}, args...)
 	}
 
 	return b.currentBlock.NewCall(fn, args...)

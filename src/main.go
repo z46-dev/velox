@@ -118,7 +118,7 @@ func main() {
 	writeTextFile("./artifacts/ast.txt", ast.StringIndented(0))
 	writeToJSONFile("./artifacts/ast.json", ast)
 
-	writeTextFile("./artifacts/output.ll", builder.NewBuilder(ast).SetTarget(builder.Windows).Build().String())
+	writeTextFile("./artifacts/output.ll", builder.NewBuilder(ast).SetTarget(builder.Linux).Build().String())
 
 	// Compile to assembly
 	cmd := exec.Command("llc", "./artifacts/output.ll")
